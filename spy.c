@@ -27,13 +27,6 @@ void* signalingThread(void *vargp) {
   }
 }
 
-int genBit(double num) {
-  double a = (int) (1.0e-9 * num + 0.10);
-  double newB = num - a
-  int newbit = (int) (newB * 4.0)
-  return newbit; 
-}
-
 int main( int argc, char** argv ) {
   setProcessor(CONTROL_PROCESSOR);
 
@@ -50,7 +43,10 @@ int main( int argc, char** argv ) {
   int state = 0; // program states      
 
   long secTimePrev = tend.tv_sec/2; // new character
-  int readTimePrev = (int) (getFraction(1.0e-9 * tend.tv_nsec + 0.10) * 4.0); // new bit
+  double prev_end_time = 1.0e-9 * tend.tv_nsec + 0.10;
+  double prev_end_time_base = (int) prev_end_time;
+  double prev_fraction = prev_end_time - prev_end_time_base;
+  int readTimePrev = (int) (prev_fraction * 4.0); 
 
   int thresh = (int) (tend.tv_nsec - tstart.tv_nsec);
   int thrSamp[4] = {0};
@@ -69,7 +65,10 @@ int main( int argc, char** argv ) {
     unsigned int avg = 0;
 
     secTime = tend.tv_sec/2;
-    readTime = (int) (getFraction(1.0e-9 * tend.tv_nsec + 0.10) * 4.0); // new bit
+    double end_time = 1.0e-9 * tend.tv_nsec + 0.10;
+    double end_time_base = (int) end_time;
+    double fraction = end_time - end_time_base;
+    readTime = (int) (fraction * 4.0); // new bit
 
     td = (int)(tend.tv_nsec - tstart.tv_nsec);
     
