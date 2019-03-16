@@ -74,9 +74,15 @@ int main( int argc, char** argv ) {
         sampPtr = 0;
       }
     }
-    for (i = 0; i < SS; i++) { // get current sample
-      sum += samp[i];
+    int il = 0;
+    while(il < SS)
+    {
+       sum += samp[il];
+       il++;
     }
+    //for (i = 0; i < SS; i++) { // get current sample
+    //  sum += samp[i];
+    //}
     avg = sum / SS;
 
     if (secTime != secTimePrev) { // character processor
@@ -88,9 +94,15 @@ int main( int argc, char** argv ) {
           fprintf(stdout, "potential transmission. verifying...\n");
         } else {
           sum = 0;
-          for (i = 0; i < 4; i++) {
-            sum += thrSamp[i];
+          int jl = 0;
+          while(jl < 4)
+          {
+            sum += thrSamp[jl];
+            jl++;
           }
+          // for (i = 0; i < 4; i++) {
+          //  sum += thrSamp[i];
+          //}
           thresh = sum / 4;
         }
         break;
@@ -128,9 +140,15 @@ int main( int argc, char** argv ) {
 
       case -1:
       sum = 0;
-        for (i = 0; i < 4; i++) {
-          sum += thrSamp[i];
-        }
+      int kl = 0;
+      while (kl < 4)
+      {
+        sum += thrSamp[kl];
+        kl++;
+      }
+        //for (i = 0; i < 4; i++) {
+      //    sum += thrSamp[i];
+      //  }
       thresh = sum / 4;
       break;
 
