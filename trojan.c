@@ -1,7 +1,3 @@
-// Nolan Shah
-// Covert Channels Communication Assignment
-// COSC 3330, Computer Architecture, University of Houston
-
 #include <time.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -53,7 +49,11 @@ int main( int argc, char** argv ) {
   clock_gettime(CLOCK_MONOTONIC, &tcurr);
 
   long secTimePrev = tcurr.tv_sec/2;
-  int readTimePrev = (int) (getFraction(1.0e-9 * tcurr.tv_nsec + 0.75) * 4.0 );
+  double prev_curr_time = 1.0e-9 * tcurr.tv_nsec + 0.75;
+  double prev_curr_time_base = (int) prev_curr_time;
+  double prev_curr_fraction = prev_curr_time - prev_curr_time_base;
+
+  int readTimePrev = (int) (prev_curr_fraction * 4.0); 
 
   pthread_t tid;
   pthread_create(&tid, NULL, signalingThread, NULL);
@@ -61,7 +61,11 @@ int main( int argc, char** argv ) {
   while (1) {
     clock_gettime(CLOCK_MONOTONIC, &tcurr);
     long secTime = tcurr.tv_sec/2;
-    int readTime = (int) (getFraction(1.0e-9 * tcurr.tv_nsec + 0.75) * 4.0 ) ; // get current times
+
+    double curr_time = 1.0e-9 * tcurr.tv_nsec + 0.75;
+    double curr_time_base = (int) curr_time;
+    double fraction = curr_time - curr_time_base;
+    int readTime = (int) (fraction * 4.0);    
 
     static int bitNumber = 0;
     if (secTime != secTimePrev) { // character processor
@@ -100,8 +104,7 @@ int main( int argc, char** argv ) {
         if (charIndex == msgLen) {
           sigBit = -1;
           goto exit;
-        }
-        //printf("sending char: %i, %c\t%f0.4\n", charIndex, message[charIndex], getFraction(1.0e-9 * tcurr.tv_nsec + 0.75));
+        }        
         printf("sending char %i: %c\n", charIndex, message[charIndex]);
         break;
 

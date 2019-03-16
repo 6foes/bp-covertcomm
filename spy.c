@@ -1,7 +1,3 @@
-// Nolan Shah
-// Covert Channels Communication Assignment
-// COSC 3330, Computer Architecture, University of Houston
-
 #include <time.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -22,7 +18,6 @@ void* signalingThread(void *vargp) {
     clock_gettime(CLOCK_MONOTONIC, &tend);
     int probe_thresh = (int) (tend.tv_nsec - tstart.tv_nsec);
     fprintf(stdout, "Threshold probing time difference in seconds %i.\n", probe_thresh);
-
     usleep(20);
   }
 }
