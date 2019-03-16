@@ -25,7 +25,7 @@ int main( int argc, char** argv ) {
   setProcessor(CONTROL_PROCESSOR);
 
   if (argc < 2) {
-    fprintf(stderr, "bad args\n");
+    fprintf(stderr, "invalid args\n");
     return 2;
   }
 
@@ -33,11 +33,11 @@ int main( int argc, char** argv ) {
   int msgLen = strlen(message);
 
   if (msgLen <= 0) {
-    fprintf(stderr, "bad message\n");
+    fprintf(stderr, "invalid message\n");
     return 2;
   }
 
-  fprintf(stdout, "message of length %i reads: \"%s\"\n", msgLen, message);
+  fprintf(stdout, "message of size %i reads: \"%s\"\n", msgLen, message);
 
   int state = 0;
 
@@ -74,7 +74,7 @@ int main( int argc, char** argv ) {
         sigBit = 0;
         bitIndex = 0;
         state = 1;
-        printf("beginning transmission...\n");
+        printf("start sending...\n");
         break;
 
         case 1:
@@ -88,7 +88,7 @@ int main( int argc, char** argv ) {
 
         case 2:
         state = 3;
-        printf("sending length...\n");
+        printf("transmitting size...\n");
         break;
 
         case 3:
@@ -151,7 +151,7 @@ int main( int argc, char** argv ) {
   }
 
 exit:
-  fprintf(stdout, "message sent!\n");
+  fprintf(stdout, "Sent!\n");
 
   return 0;
 } 

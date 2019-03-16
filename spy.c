@@ -53,7 +53,7 @@ int main( int argc, char** argv ) {
   char *outputStr = NULL;
   char currentChar = 0;
 
-  fprintf(stdout, "listening for transmission...\n");
+  fprintf(stdout, "waiting...\n");
   while (1) {
     int i = 0, td = 0, readTime = 0;
     long sum = 0, secTime = 0;
@@ -91,7 +91,7 @@ int main( int argc, char** argv ) {
         case 0:
         if (currentChar == (char)0b10101010) {
           state = 1;
-          fprintf(stdout, "potential transmission. verifying...\n");
+          fprintf(stdout, "verifying...\n");
         } else {
           sum = 0;
           int jl = 0;
@@ -111,10 +111,10 @@ int main( int argc, char** argv ) {
         if (currentChar == (char)0b10101010) {
         } else if (currentChar == (char)0b00000000) {
           state = 2;
-          fprintf(stdout, "verification complete! receiving...\n");
+          fprintf(stdout, "receiving...\n");
         } else {
           state = 0;
-          fprintf(stdout, "verification failed! resetting...\n");
+          fprintf(stdout, "failed! listening...\n");
         }
         break;
 
@@ -122,7 +122,7 @@ int main( int argc, char** argv ) {
         if (length < 0) { // length is the first bit to be sent
           length = currentChar;
           outputStr = malloc(sizeof(char) * (length + 1));
-          fprintf(stdout, "message length is %i.\n", length);
+          fprintf(stdout, "message size is %i.\n", length);
         } else {
           if (currentChar == (char)0) {
             outputStr[current] = '\0';
@@ -178,7 +178,7 @@ int main( int argc, char** argv ) {
 exit:
 
   if (outputStr != NULL) { // clean up
-    fprintf(stdout, "message reads: %s\n", outputStr);
+    fprintf(stdout, "message is: %s\n", outputStr);
   }
   free(outputStr);
   return 0;
