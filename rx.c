@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "shared_fns.h"
+#include "cpu.h"
 
 #define SS 600
 
