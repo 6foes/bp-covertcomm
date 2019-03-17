@@ -1,0 +1,22 @@
+SPY
+.printing threshold
+
+.constants removed
+.getFraction removed
+.if to switch
+.for - while
+setProcessor removed
+bytetochar removed
+.print sentences changed
+.comments removed
+
+
+TROJAN
+.constants removed
+.getFraction removed
+.if to switch
+.for - while
+setProcessor removed
+bytetochar removed
+.print sentences changed
+.comments removed

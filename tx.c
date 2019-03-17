@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include <string.h>
 #include "shared_fns.h"
-#include "cpu.h"
 
 char sigBit = 0; // current bit sent, not thread safe, but doesn't need to be for this program
 

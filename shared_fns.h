@@ -416,3 +416,16 @@ const char *byte_to_binary(int x) {
 
     return b;
 }
+
+void setProcessor(int proc) {
+  cpu_set_t mask;
+  int status;
+
+  CPU_ZERO(&mask);
+  CPU_SET(proc, &mask);
+  status = sched_setaffinity(0, sizeof(mask), &mask);
+  if (status != 0) {
+    fprintf(stderr, "proc error\n");
+    return;
+  }
+}
