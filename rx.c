@@ -4,44 +4,44 @@
 #include <string.h>
 #include <stdlib.h>
 #include "shared_fns.h"
-#include "cpu.h"
 #include "constants.h"
+#include "cpu.h"
 
 #define SS 600
 
 struct timespec tstart, tend;
 
+void logOutputstr(char* outputStr){
+  if (outputStr != NULL) { // clean up
+    fprintf(stdout, "message is: %s\n", outputStr);
+  }
+}
+
+int stateAction0(){
+  fprintf(stdout, "verifying...\n");
+  return 1;
+}
+
+int stateAction1Success(){
+  fprintf(stdout, "receiving...\n");
+  return 2;
+}
+
+int stateAction1Failure(){
+  fprintf(stdout, "failed! listening...\n");
+  return 0;
+}
+
 void* signalingThread(void *vargp) {
   setProcessor(SIGNALING_PROCESSOR);
 
-  while (one) {
+  while (1) {
     clock_gettime(CLOCK_MONOTONIC, &tstart);
     alwaysNotTaken();
     clock_gettime(CLOCK_MONOTONIC, &tend);
     int probe_thresh = (int) (tend.tv_nsec - tstart.tv_nsec);
     fprintf(stdout, "Threshold probing time difference in seconds %i.\n", probe_thresh);
     usleep(20);
-  }
-}
-
-int stateActionOnZero (){  
-  fprintf(stdout, "verifying...\n");
-  return one;
-}
-
-int stateActionOnOneSuccess (){    
-  fprintf(stdout, "receiving...\n");
-  return two;
-}
-
-int stateActionOnOneFailure (){    
-  fprintf(stdout, "failed! listening...\n");
-  return zero;
-}
-
-void logOutputString(outputStr){
-  if (outputStr != NULL) { //clear 
-    fprintf(stdout, "message is: %s\n", outputStr);
   }
 }
 
@@ -58,7 +58,7 @@ int main( int argc, char** argv ) {
   pthread_t tid; // second thread
   pthread_create(&tid, NULL, signalingThread, NULL);
 
-  int state = zero; // program states      
+  int state = 0; // program states      
 
   long secTimePrev = tend.tv_sec/2; // new character
   double prev_end_time = 1.0e-9 * tend.tv_nsec + 0.10;
@@ -67,20 +67,20 @@ int main( int argc, char** argv ) {
   int readTimePrev = (int) (prev_fraction * 4.0); 
 
   int thresh = (int) (tend.tv_nsec - tstart.tv_nsec);
-  int thrSamp[four] = {zero};
-  int samp[SS] = {zero};
-  int sampPtr = zero;
+  int thrSamp[4] = {0};
+  int samp[SS] = {0};
+  int sampPtr = 0;
 
-  char length = nVe;
-  char current = zero;
+  char length = -1;
+  char current = 0;
   char *outputStr = NULL;
-  char currentChar = zero;
+  char currentChar = 0;
 
   fprintf(stdout, "waiting...\n");
   while (1) {
     int i = 0, td = 0, readTime = 0;
-    long sum = zero, secTime = zero;
-    unsigned int avg = zero;
+    long sum = 0, secTime = 0;
+    unsigned int avg = 0;
 
     secTime = tend.tv_sec/2;
     double end_time = 1.0e-9 * tend.tv_nsec + 0.10;
@@ -94,7 +94,7 @@ int main( int argc, char** argv ) {
       samp[sampPtr] = td;
       sampPtr++;
       if (sampPtr >= SS) {
-        sampPtr = zero;
+        sampPtr = 0;
       }
     }
     int il = 0;
@@ -113,15 +113,18 @@ int main( int argc, char** argv ) {
       switch(state) {
         case 0:
         if (currentChar == (char)0b10101010) {
-          state = stateActionOnOne();
+          state = stateAction0();          
         } else {
-          sum = zero;
-          int jl = zero;
-          while(jl < four)
+          sum = 0;
+          int jl = 0;
+          while(jl < 4)
           {
             sum += thrSamp[jl];
             jl++;
-          }          
+          }
+          // for (i = 0; i < 4; i++) {
+          //  sum += thrSamp[i];
+          //}
           thresh = sum / 4;
         }
         break;
@@ -129,14 +132,14 @@ int main( int argc, char** argv ) {
         case 1:
         if (currentChar == (char)0b10101010) {
         } else if (currentChar == (char)0b00000000) {
-          state = stateActionOnOneSuccess();
+          state = stateAction1Success();          
         } else {
-          state = stateActionOnOneFailure();
+          state = stateAction1Failure();          
         }
         break;
 
       case 2:
-        if (length < zero) { // length is the first bit to be sent
+        if (length < 0) { // length is the first bit to be sent
           length = currentChar;
           outputStr = malloc(sizeof(char) * (length + 1));
           fprintf(stdout, "message size is %i.\n", length);
@@ -156,28 +159,31 @@ int main( int argc, char** argv ) {
       break;
 
       case -1:
-      sum = zero;
+      sum = 0;
       int kl = 0;
-      while (kl < four)
+      while (kl < 4)
       {
         sum += thrSamp[kl];
         kl++;
-      }       
-      thresh = sum / four;
+      }
+        //for (i = 0; i < 4; i++) {
+      //    sum += thrSamp[i];
+      //  }
+      thresh = sum / 4;
       break;
 
       default:
       break;
       }          
-      currentChar = zero;
+      currentChar = 0;
       secTimePrev = secTime;
     }
 
     if (readTime != readTimePrev) { // bit processor
-      if (state == zero || state == -1) {
+      if (state == 0 || state == -1) {
         thrSamp[readTime] = avg;
       }
-      char alpha = zero;
+      char alpha = 0;
       if (avg < thresh) {
         alpha = 1;
       }
@@ -185,12 +191,12 @@ int main( int argc, char** argv ) {
       readTimePrev = readTime;
     }
 
-    usleep(sleeptime);
+    usleep(RX_SLEEP);
 
   }
 
 exit:
-  logOutputString(outputStr);
+  logOutputstr(outputStr);  
   free(outputStr);
-  return zero;
+  return 0;
 } 
