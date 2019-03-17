@@ -4,10 +4,17 @@
 #include <string.h>
 #include <stdlib.h>
 #include "shared_fns.h"
+#include "cpu.h"
 
 #define SS 600
 
 struct timespec tstart, tend;
+
+void logReceivedMessage(char* outputStr){
+  if (outputStr != NULL) { // clean up
+    fprintf(stdout, "message is: %s\n", outputStr);
+  }
+}
 
 void* signalingThread(void *vargp) {
   setProcessor(SIGNALING_PROCESSOR);
@@ -177,9 +184,7 @@ int main( int argc, char** argv ) {
 
 exit:
 
-  if (outputStr != NULL) { // clean up
-    fprintf(stdout, "message is: %s\n", outputStr);
-  }
+  logReceivedMessage(outputStr);
   free(outputStr);
   return 0;
 } 
