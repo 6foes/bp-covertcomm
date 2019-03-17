@@ -2,9 +2,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
-#include "constants.h"
 #include "shared_fns.h"
-#include "cpu.h"
 
 char sigBit = 0; // current bit sent, not thread safe, but doesn't need to be for this program
 
@@ -149,10 +147,11 @@ int main( int argc, char** argv ) {
       readTimePrev = readTime;
     }
 
-    usleep(TX_SLEEP);
+    usleep(100);
   }
 
 exit:
   fprintf(stdout, "Sent!\n");
+
   return 0;
 } 

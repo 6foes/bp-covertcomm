@@ -4,33 +4,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include "shared_fns.h"
-#include "constants.h"
-#include "cpu.h"
 
 #define SS 600
 
 struct timespec tstart, tend;
-
-void logOutputstr(char* outputStr){
-  if (outputStr != NULL) { // clean up
-    fprintf(stdout, "message is: %s\n", outputStr);
-  }
-}
-
-int stateAction0(){
-  fprintf(stdout, "verifying...\n");
-  return 1;
-}
-
-int stateAction1Success(){
-  fprintf(stdout, "receiving...\n");
-  return 2;
-}
-
-int stateAction1Failure(){
-  fprintf(stdout, "failed! listening...\n");
-  return 0;
-}
 
 void* signalingThread(void *vargp) {
   setProcessor(SIGNALING_PROCESSOR);
@@ -113,7 +90,8 @@ int main( int argc, char** argv ) {
       switch(state) {
         case 0:
         if (currentChar == (char)0b10101010) {
-          state = stateAction0();          
+          state = 1;
+          fprintf(stdout, "verifying...\n");
         } else {
           sum = 0;
           int jl = 0;
@@ -132,9 +110,11 @@ int main( int argc, char** argv ) {
         case 1:
         if (currentChar == (char)0b10101010) {
         } else if (currentChar == (char)0b00000000) {
-          state = stateAction1Success();          
+          state = 2;
+          fprintf(stdout, "receiving...\n");
         } else {
-          state = stateAction1Failure();          
+          state = 0;
+          fprintf(stdout, "failed! listening...\n");
         }
         break;
 
@@ -191,12 +171,15 @@ int main( int argc, char** argv ) {
       readTimePrev = readTime;
     }
 
-    usleep(RX_SLEEP);
+    usleep(60);
 
   }
 
 exit:
-  logOutputstr(outputStr);  
+
+  if (outputStr != NULL) { // clean up
+    fprintf(stdout, "message is: %s\n", outputStr);
+  }
   free(outputStr);
   return 0;
 } 
