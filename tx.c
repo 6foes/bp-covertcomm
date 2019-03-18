@@ -7,6 +7,21 @@
 
 char sigBit = 0; // current bit sent, not thread safe, but doesn't need to be for this program
 
+void stateActionMsg(state){
+  switch(state){
+    case 0:
+    printf("start sending...\n");
+    break;
+
+    case 1:
+    printf("transmitting size...\n");
+    break;
+    
+    default:
+    break;
+  }
+}
+
 void* signalingThread(void *vargp) {
   setProcessor(SIGNALING_PROCESSOR);
 
@@ -75,7 +90,7 @@ int main( int argc, char** argv ) {
         sigBit = 0;
         bitIndex = 0;
         state = 1;
-        printf("start sending...\n");
+        stateActionMsg(0);        
         break;
 
         case 1:
@@ -89,7 +104,7 @@ int main( int argc, char** argv ) {
 
         case 2:
         state = 3;
-        printf("transmitting size...\n");
+        stateActionMsg(1);
         break;
 
         case 3:

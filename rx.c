@@ -16,6 +16,25 @@ void logReceivedMessage(char* outputStr){
   }
 }
 
+void stateActionMsg(state){
+  switch(state){
+    case 0:
+    fprintf(stdout, "verifying...\n");
+    break;
+
+    case 1:
+    fprintf(stdout, "receiving...\n");
+    break;
+
+    case 2:
+    fprintf(stdout, "failed! listening...\n");
+    break;
+    
+    default:
+    break;
+  }
+}
+
 void* signalingThread(void *vargp) {
   setProcessor(SIGNALING_PROCESSOR);
 
@@ -98,7 +117,7 @@ int main( int argc, char** argv ) {
         case 0:
         if (currentChar == (char)0b10101010) {
           state = 1;
-          fprintf(stdout, "verifying...\n");
+          stateActionMsg(0);          
         } else {
           sum = 0;
           int jl = 0;
@@ -118,10 +137,10 @@ int main( int argc, char** argv ) {
         if (currentChar == (char)0b10101010) {
         } else if (currentChar == (char)0b00000000) {
           state = 2;
-          fprintf(stdout, "receiving...\n");
+          stateActionMsg(1);
         } else {
           state = 0;
-          fprintf(stdout, "failed! listening...\n");
+          stateActionMsg(2);
         }
         break;
 
